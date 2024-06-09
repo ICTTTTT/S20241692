@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .menu {
+            background-color: #333;
+            overflow: hidden;
+        }
+        .menu a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .menu a:hover {
+            background-color: #575757;
+        }
+        .container {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+       <a href="#home">Home</a>
+        <a href="#about">About Us</a>
+        <a href="#class-info">Class Information</a>
+        <a href="#search-class">Search Class</a>
+    </div>
+    <div id="home" class="section">
+        <h2>Home</h2>
+        <p>Welcome to Virual Class Room</p>
+		 <img src="https://corp.kaltura.com/wp-content/uploads/2020/07/GettyImages-1213470247-1536x1024.jpg" alt="Classroom Image" width="800" height="533">
+    </div>
+
+    <div id="about" class="section">
+        <h2>About Us</h2>
+        <p> Part of ICT502</p>
+    </div>
+
+    <div id="class-info" class="section">
+       
+    
+		<div class="container">
+        <h2>Class Information</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ClassID</th>
+                    <th>ClassName</th>
+                    <th>Description</th>
+                    <th>Instructor</th>
+                    <th>StartDate</th>
+                    <th>EndDate</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="class-table-body">
+              
+            </tbody>
+        </table>
+        
+        <h2>Add / Edit Class</h2>
+        <div class="form-group">
+            <label for="class-id">ClassID</label>
+            <input type="text" id="class-id" disabled>
+        </div>
+        <div class="form-group">
+            <label for="class-name">ClassName</label>
+            <input type="text" id="class-name">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="instructor">Instructor</label>
+            <input type="text" id="instructor">
+        </div>
+        <div class="form-group">
+            <label for="start-date">StartDate</label>
+            <input type="date" id="start-date">
+        </div>
+        <div class="form-group">
+            <label for="end-date">EndDate</label>
+            <input type="date" id="end-date">
+        </div>
+        <div class="form-group">
+            <button onclick="addOrUpdateClass()">Add / Update Class</button>
+        </div>
+
+        <h2>Search Class</h2>
+        <div class="form-group">
+            <label for="search-input">Search</label>
+            <input type="text" id="search-input" oninput="searchClasses()">
+        </div>
+    </div>
+    </div>
+
+    <div id="search-class" class="section">
+     
+    </div>
+
+    
+
+    <script>
+  let classes = [
+    {
+        classId: 1,
+        className: "Mathematics",
+        description: "Introduction to basic mathematical concepts",
+        instructor: "John Smith",
+        startDate: "2024-09-01",
+        endDate: "2024-12-15"
+    },
+    {
+        classId: 2,
+        className: "English Literature",
+        description: "Exploring classic English literature works",
+        instructor: "Emily Johnson",
+        startDate: "2024-09-15",
+        endDate: "2024-12-30"
+    },
+    {
+        classId: 3,
+        className: "Computer Science",
+        description: "Fundamentals of computer programming",
+        instructor: "Michael Brown",
+        startDate: "2024-10-01",
+        endDate: "2024-12-20"
+    },
+    {
+        classId: 4,
+        className: "History",
+        description: "Survey of world history",
+        instructor: "Sarah Miller",
+        startDate: "2024-09-10",
+        endDate: "2024-12-10"
+    },
+    {
+        classId: 5,
+        className: "Biology",
+        description: "Exploring the principles of biology",
+        instructor: "David Wilson",
+        startDate: "2024-09-20",
+        endDate: "2024-12-25"
+    },
+    {
+        classId: 6,
+        className: "Art",
+        description: "Introduction to various art techniques",
+        instructor: "Alexandra Lee",
+        startDate: "2024-09-05",
+        endDate: "2024-12-22"
+    }
+];
+
+renderTable(); // Render the table with sample classes
+
+        let currentEditIndex = -1;
+
+        function renderTable(classesToRender = classes) {
+            const tableBody = document.getElementById('class-table-body');
+            tableBody.innerHTML = '';
+            classesToRender.forEach((cls, index) => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${cls.classId}</td>
+                        <td>${cls.className}</td>
+                        <td>${cls.description}</td>
+                        <td>${cls.instructor}</td>
+                        <td>${cls.startDate}</td>
+                        <td>${cls.endDate}</td>
+                        <td>
+                            <button onclick="editClass(${index})">Edit</button>
+                            <button onclick="deleteClass(${index})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function addOrUpdateClass() {
+            const classId = document.getElementById('class-id').value;
+            const className = document.getElementById('class-name').value;
+            const description = document.getElementById('description').value;
+            const instructor = document.getElementById('instructor').value;
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+
+            if (currentEditIndex === -1) {
+                const newClass = {
+                    classId: classes.length + 1,
+                    className,
+                    description,
+                    instructor,
+                    startDate,
+                    endDate
+                };
+                classes.push(newClass);
+            } else {
+                classes[currentEditIndex] = {
+                    classId: parseInt(classId),
+                    className,
+                    description,
+                    instructor,
+                    startDate,
+                    endDate
+                };
+                currentEditIndex = -1;
+            }
+
+            document.getElementById('class-id').value = '';
+            document.getElementById('class-name').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('instructor').value = '';
+            document.getElementById('start-date').value = '';
+            document.getElementById('end-date').value = '';
+
+            renderTable();
+        }
+
+        function editClass(index) {
+            const cls = classes[index];
+            document.getElementById('class-id').value = cls.classId;
+            document.getElementById('class-name').value = cls.className;
+            document.getElementById('description').value = cls.description;
+            document.getElementById('instructor').value = cls.instructor;
+            document.getElementById('start-date').value = cls.startDate;
+            document.getElementById('end-date').value = cls.endDate;
+            currentEditIndex = index;
+        }
+
+        function deleteClass(index) {
+            classes.splice(index, 1);
+            renderTable();
+        }
+
+        function searchClasses() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const filteredClasses = classes.filter(cls =>
+                cls.className.toLowerCase().includes(searchInput) ||
+                cls.description.toLowerCase().includes(searchInput) ||
+                cls.instructor.toLowerCase().includes(searchInput) ||
+                cls.startDate.toLowerCase().includes(searchInput) ||
+                cls.endDate.toLowerCase().includes(searchInput)
+            );
+            renderTable(filteredClasses);
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>
